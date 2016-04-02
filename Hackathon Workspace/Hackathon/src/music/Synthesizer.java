@@ -9,6 +9,7 @@ import javax.sound.midi.*;
 public class Synthesizer
 {
 	public static final int PPQ = 24;
+	public static boolean legato = false;
 	private static Track initializeMidi(Sequence s, int bpm) throws Exception
 	{
 		//****  Create a new MIDI sequence with 24 ticks per beat  ****
@@ -88,7 +89,7 @@ public class Synthesizer
 			for(Note n: notes)
 			{
 				addNote(t, n);
-				int end = n.getStart() + n.getDuration();
+				int end = n.getEnd();
 				if (latestEnd < end)
 					latestEnd = end;
 			}

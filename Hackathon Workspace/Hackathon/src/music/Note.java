@@ -23,6 +23,14 @@ public class Note
 	{
 		return duration;
 	}
+	public int getEnd()
+	{
+		return startTime + duration;
+	}
+	public void setEnd(int endTime)
+	{
+		duration = endTime - startTime;
+	}
 	public Pitch getPitch()
 	{
 		return pitch;
