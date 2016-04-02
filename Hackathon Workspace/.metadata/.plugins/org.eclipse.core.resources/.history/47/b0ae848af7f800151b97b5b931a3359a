@@ -1,0 +1,28 @@
+package music;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Timer;
+
+public class Metronome {
+	Timer myTimer;
+	Cli clip;
+	public Metronome(int bpm)
+	{
+		int delay = (int) Math.round(Rhythm.bpmToBeatLength(bpm) * 1000);
+		myTimer = new Timer(delay, new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				
+			}
+		});
+	}
+	public void start()
+	{
+		
+	}
+	private void playSound()
+	{
+		
+	}
+}
