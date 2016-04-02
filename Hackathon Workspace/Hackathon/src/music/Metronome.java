@@ -13,11 +13,23 @@ public class Metronome {
 	private Timer myTimer;
 	private Clip clip;
 	private int tickNumber = 0;
+	public static void main(String[] args)
+	{
+		Metronome x = new Metronome(60);
+		x.start();
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	public Metronome(int bpm)
 	{
 		try{
 			URL url = this.getClass().getClassLoader().getResource("res/Metronome.wav");
-	        AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+			AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+			
 	        clip = AudioSystem.getClip();
 	        clip.open(audioIn);
 		}catch(Exception e){
@@ -43,15 +55,26 @@ public class Metronome {
 		myTimer.stop();
 		tickNumber = 0;
 	}
+	public void setDelay(int bpm)
+	{
+		int delay = (int) Math.round(Rhythm.bpmToBeatLength(bpm) * 1000);
+		myTimer.setDelay(delay);
+	}
 	private void onFirstTick()
 	{
 		
 	}
 	private void playSound()
 	{
-		if (clip.isRunning())
-			clip.stop();   // Stop the player if it is still running
-		clip.setFramePosition(0); // rewind to the beginning
-		clip.start();     // Start playing
+		Thread t = new Thread(){
+			public void run()
+			{
+				if (clip.isRunning())
+					clip.stop();   // Stop the player if it is still running
+				clip.setFramePosition(0); // rewind to the beginning
+				clip.start();     // Start playing
+			}
+		};
+		t.start();
 	}
 }

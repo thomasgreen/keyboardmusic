@@ -1,0 +1,66 @@
+package music;
+
+import java.util.Hashtable;
+
+public class Pitch
+{
+	public static final Pitch NONE = null;
+	public static final Hashtable<String, String> NAME_DICT = makeDict();
+	public static final Hashtable<String, Integer> CODE_DICT = makeDict2();
+	public int midiCode;
+	public Pitch(String key, boolean isKey)
+	{
+		midiCode = nameToCode(keyToString(key));
+	}
+	public Pitch(String name)
+	{
+		midiCode = nameToCode(name);
+	}
+	public static int nameToCode(String name)
+	{
+		if(name == null)
+			return -1;
+		int x = CODE_DICT.get(name.substring(0, 1));
+		int octave = Integer.parseInt(name.substring(1, 2));
+		int dO = octave - 4;
+		int code = x + (dO * 12);
+		System.out.println(name);
+		if(name.length() > 2)
+		{
+			System.out.println("Long name");
+			System.out.println(name.substring(2, 3));
+			if(name.substring(2, 3).equals("#"))
+				code += 1;
+		}
+		System.out.println(code);
+		return code;
+	}
+	public static String keyToString(String s)
+	{
+		return NAME_DICT.get(s);
+	}
+	public static Hashtable<String, String> makeDict()
+	{
+		Hashtable<String, String> dict = new Hashtable<String, String>();
+		String[] key = {"a", "s", "d", "f", "g", "h", "j", "k", "l", ";",
+				"w", "e", "t", "y", "u", "o", "p"};
+		String[] pitch = {"C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "D5", "E5",
+				"C4#", "D4#", "F4#", "G4#", "A4#", "C5#", "D5#"};
+		for(int i = 0; i < key.length; i++)
+		{
+			dict.put(key[i], pitch[i]);
+		}
+		return dict;
+	}
+	public static Hashtable<String, Integer> makeDict2()
+	{
+		Hashtable<String, Integer> dict = new Hashtable<String, Integer>();
+		String[] name = {"C", "D", "E", "F", "G", "A", "B"};
+		Integer[] code = {60, 62, 64, 65, 67, 69, 71};
+		for(int i = 0; i < name.length; i++)
+		{
+			dict.put(name[i], code[i]);
+		}
+		return dict;
+	}
+}

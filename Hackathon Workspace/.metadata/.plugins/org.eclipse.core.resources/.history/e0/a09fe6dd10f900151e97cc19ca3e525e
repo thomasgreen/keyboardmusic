@@ -1,0 +1,60 @@
+package music;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sound.midi.*;
+import javax.sound.midi.Synthesizer;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
+public class Piano {
+	
+	Synthesizer synth;
+	final MidiChannel channel;
+	final int velocity = 64;
+	private static Piano piano = new Piano();
+	private List<Clip> clips = new ArrayList<Clip>();
+	public Piano()
+	{
+		try
+		{
+			for(int i = 60; i < 77; i++)
+			{
+				URL url = this.getClass().getClassLoader().getResource("res/" + String.valueOf(i) + ".wav");
+				AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+		        Clip clip = AudioSystem.getClip();
+		        clip.open(audioIn);
+		        clips.add(clip);
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		try {
+			synth = MidiSystem.getSynthesizer();
+			synth.open();
+		} catch (MidiUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		channel = synth.getChannels()[1];
+	}
+	private void noteOn(String key)
+	{
+		int code = Pitch.nameToCode(Pitch.keyToString(key));
+		Clip clip = clips.get(code - 60);
+		clip.start();
+//		if(code >= 0)
+//		{
+//			channel.noteOn(Pitch.nameToCode(Pitch.keyToString(key)), velocity);
+//		}
+	}
+	public static void playNote(String key) throws Exception
+	{
+		piano.noteOn(key);
+	}
+}

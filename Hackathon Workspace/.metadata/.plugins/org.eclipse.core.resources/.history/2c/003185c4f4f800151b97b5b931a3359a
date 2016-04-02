@@ -1,8 +1,0 @@
-package music;
-
-public class Piano {
-	public static void playNote(String key)
-	{
-		
-	}
-}

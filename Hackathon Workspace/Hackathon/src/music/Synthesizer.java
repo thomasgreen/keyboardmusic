@@ -112,4 +112,8 @@ public class Synthesizer
 		} //catch
 	    System.out.println("midifile end ");
 	}
+
+    public void open() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

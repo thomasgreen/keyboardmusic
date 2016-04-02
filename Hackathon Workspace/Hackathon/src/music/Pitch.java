@@ -18,15 +18,18 @@ public class Pitch
 	}
 	public static int nameToCode(String name)
 	{
+		if(name == null)
+			return -1;
 		int x = CODE_DICT.get(name.substring(0, 1));
 		int octave = Integer.parseInt(name.substring(1, 2));
 		int dO = octave - 4;
 		int code = x + (dO * 12);
 		if(name.length() > 2)
 		{
-			if(name.substring(2) == "#")
+			if(name.substring(2, 3).equals("#"))
 				code += 1;
 		}
+		System.out.println(code);
 		return code;
 	}
 	public static String keyToString(String s)

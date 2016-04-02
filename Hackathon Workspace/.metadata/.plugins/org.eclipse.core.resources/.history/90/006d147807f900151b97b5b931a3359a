@@ -1,0 +1,50 @@
+package music;
+
+import javax.sound.midi.*;
+import javax.sound.midi.Synthesizer;
+
+public class Piano {
+	
+	Synthesizer synth;
+	final MidiChannel channel;
+	final int velocity = 64;
+	private static Piano piano = new Piano();
+	public static void main(String[] args)
+	{
+		try {
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public Piano()
+	{
+		try {
+			synth = MidiSystem.getSynthesizer();
+			synth.open();
+		} catch (MidiUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		channel = synth.getChannels()[1];
+	}
+	private void noteOn(String key)
+	{
+		int code = Pitch.nameToCode(Pitch.keyToString(key));
+		if(code >= 0)
+		{
+			channel.noteOn(Pitch.nameToCode(Pitch.keyToString(key)), velocity);
+		}
+	}
+	public static void playNote(String key) throws Exception
+	{
+		Thread t = new Thread(){
+			public void run()
+			{
+				piano.noteOn(key);
+			}
+		};
+		t.start();
+	}
+}
