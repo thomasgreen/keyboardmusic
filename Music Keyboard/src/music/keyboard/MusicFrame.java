@@ -7,12 +7,22 @@ package music.keyboard;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
+import javax.sound.midi.MetaMessage;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.swing.Timer;
+import javax.swing.text.DefaultCaret;
+import static music.keyboard.Music.convert;
 
 /**
  *
@@ -21,6 +31,7 @@ import javafx.event.ActionEvent;
 public class MusicFrame extends javax.swing.JFrame {
     private double mytime;
     private boolean on = false;
+    private boolean on2 = false;
     private int buttoncount = 0;
     private static final int JFXPANEL_WIDTH_INT = 500;
     private static final int JFXPANEL_HEIGHT_INT = 500;
@@ -31,11 +42,12 @@ public class MusicFrame extends javax.swing.JFrame {
     private double previousprevioustime;
     private String lastchar;
     private double cumulativedistance;
+    private Metronome m;
     
-    private class KeyNode {
-        private String note;
-        private double seconds;
-        private double duration;
+    public class KeyNode {
+        public String note;
+        public double seconds;
+        public double duration;
         public KeyNode(String note, double seconds, double duration) {
             this.note = note;
             this.seconds = seconds;
@@ -76,6 +88,15 @@ public class MusicFrame extends javax.swing.JFrame {
                         previousprevioustime = System.currentTimeMillis() / 1000.0 - previoustime;
                         previoustime = System.currentTimeMillis() / 1000.0;
                         lastchar = String.valueOf(e.getKeyChar());
+                        if (on) {
+                            text.setText(Pitch.NAME_DICT.get(String.valueOf(e.getKeyChar())));
+                            try {
+                                Piano.playNote(String.valueOf(e.getKeyChar()));
+                            } catch (Exception ex) {
+                                Logger.getLogger(MusicFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        
                     }
                 }
                 if (e.getID() == KeyEvent.KEY_RELEASED) {
@@ -104,6 +125,7 @@ public class MusicFrame extends javax.swing.JFrame {
         letempo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         text = new javax.swing.JTextArea();
+        testtempo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -125,9 +147,18 @@ public class MusicFrame extends javax.swing.JFrame {
         letempo.setText("Tempo: 120");
 
         text.setEditable(false);
-        text.setColumns(20);
+        text.setColumns(2);
+        text.setFont(new java.awt.Font("Monospaced", 1, 16)); // NOI18N
+        text.setLineWrap(true);
         text.setRows(5);
         jScrollPane1.setViewportView(text);
+
+        testtempo.setText("Test Tempo");
+        testtempo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testtempoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -136,14 +167,15 @@ public class MusicFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1)
-                                .addGap(18, 18, 18)
-                                .addComponent(record))
+                            .addComponent(jButton1)
                             .addComponent(letempo))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(testtempo)
+                            .addComponent(record))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -151,9 +183,11 @@ public class MusicFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(letempo)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(letempo)
+                    .addComponent(testtempo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -166,45 +200,76 @@ public class MusicFrame extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-                if (!on) {
+                if (!on2) {
                     System.out.println("Starting to count!");
                     buttoncount = 0;
                     mytime = System.currentTimeMillis();
-                    on = true;
+                    on2 = true;
                 }
                 else {
                     mytime = System.currentTimeMillis() - mytime;
-                    System.out.println("This is your beat: " + Math.round(60 * ((double) buttoncount / ((double) mytime / 1000.0))));
+                    //System.out.println("This is your beat: " + Math.round(60 * ((double) buttoncount / ((double) mytime / 1000.0))));
                     tempo = (int) Math.round(60 * ((double) buttoncount / ((double) mytime / 1000.0)));
-                    on = false;
+                    on2 = false;
                     letempo.setText("Tempo: " + tempo);
                     record.setEnabled(true);
                 }
     }//GEN-LAST:event_jButton1ActionPerformed
-
+    public static void play()
+    {
+        try
+        {
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(new File("metronome.wav")));
+            clip.start();
+        }
+        catch (Exception exc)
+        {
+            exc.printStackTrace(System.out);
+        }
+    }
     private void recordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recordActionPerformed
+      
         if (!on) {
                     System.out.println("Starting to record notes!");
                     previoustime = System.currentTimeMillis();
                     thelist.clear();
                     on = true;
-                }
+                    m = new Metronome(tempo);
+                    m.start();
+    }/*
+                    while(on) {
+                    try {
+                        Thread.sleep(tempo / 60 * 1000); //not done
+                    } catch(InterruptedException ie) {}
+                    //play();
+                    Toolkit.getDefaultToolkit().beep();
+                    }
+        }*/
                 else {
+                    m.stop();
+            /*
                     for (int i = 0; i < thelist.size() - 1; i++) {
                         thelist.get(i).seconds = thelist.get(i + 1).seconds;
-                    }
-                    for (int i = 0; i < thelist.size() - 1; i++) {
+                    }*/
+                    thelist.get(0).seconds = 0;
+                    for (int i = 1; i < thelist.size() - 1; i++) {
                         thelist.get(i + 1).seconds += thelist.get(i).seconds;
                     }
-                    thelist.get(thelist.size() - 1).seconds = 0;
                     for (int i = 0; i < thelist.size(); i++) {
                         text.setText(text.getText() + thelist.get(i).note + " " + thelist.get(i).duration + " " + thelist.get(i).seconds + " //");
                         System.out.print(thelist.get(i).note + thelist.get(i).seconds);
                     }
                     on = false;
-                    
+                    ArrayList<Note> temp = (ArrayList) convert(thelist, tempo);
+                    Music m = new Music(temp, tempo);
+                    Synthesizer.toMidi(m);
                 }
     }//GEN-LAST:event_recordActionPerformed
+
+    private void testtempoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testtempoActionPerformed
+        
+    }//GEN-LAST:event_testtempoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -246,6 +311,7 @@ public class MusicFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel letempo;
     private javax.swing.JButton record;
+    private javax.swing.JButton testtempo;
     private javax.swing.JTextArea text;
     // End of variables declaration//GEN-END:variables
 }

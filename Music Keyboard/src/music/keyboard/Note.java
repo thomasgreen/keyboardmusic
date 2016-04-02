@@ -1,0 +1,38 @@
+package music.keyboard;
+
+public class Note
+{
+	public boolean isRest = false;
+	private int startTime;
+	private int duration;
+	private Pitch pitch;
+	public Note(int start, int duration, Pitch pitch)
+	{
+		//duration = number of ticks in midi time.
+		if(pitch == Pitch.NONE)
+			isRest = true;
+		this.duration = duration;
+		this.pitch = pitch;
+		this.startTime = start;
+	}
+	public int getStart()
+	{
+		return startTime;
+	}
+	public int getDuration()
+	{
+		return duration;
+	}
+	public int getEnd()
+	{
+		return startTime + duration;
+	}
+	public void setEnd(int endTime)
+	{
+		duration = endTime - startTime;
+	}
+	public Pitch getPitch()
+	{
+		return pitch;
+	}
+}
