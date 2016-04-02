@@ -1,6 +1,5 @@
 package music;
 
-import java.util.Dictionary;
 import java.util.Hashtable;
 
 public class Pitch
@@ -43,7 +42,7 @@ public class Pitch
 	{
 		Hashtable<String, Integer> dict = new Hashtable<String, Integer>();
 		String[] name = {"C", "D", "E", "F", "G", "A", "B"};
-		Integer[] code = {60, 62, 63, 64, 66, 68, 70};
+		Integer[] code = {60, 62, 64, 65, 67, 69, 71};
 		for(int i = 0; i < name.length; i++)
 		{
 			dict.put(name[i], code[i]);

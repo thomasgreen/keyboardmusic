@@ -15,13 +15,4 @@ public class Rhythm
 		//Returns duration in ticks.
 		return (((int) Math.round(duration*PPQ/beatLength))/TICK_PER_BASE) * TICK_PER_BASE;
 	}
-	public static int[] convert(double[] durations, double beatLength)
-	{
-		int[] result = new int[durations.length];
-		for(int i = 0; i < result.length; i++)
-		{
-			result[i] = convert(durations[i], beatLength);
-		}
-		return result;
-	}
 }

@@ -16,19 +16,6 @@ public class Music
 	{
 		return notes;
 	}
-	public static double timeAvg(double[] times)
-	{
-		double sum = 0;
-		for(double t: times)
-		{
-			sum += t;
-		}
-		return sum/times.length;
-	}
-	public static int bpm(double timeAvg)
-	{
-		return (int) Math.round(60/timeAvg);
-	}
 	public static List<Note> convert(List<KeyPress> keyPresses, int bpm)
 	{
 		List<Note> notes = new ArrayList<Note>();

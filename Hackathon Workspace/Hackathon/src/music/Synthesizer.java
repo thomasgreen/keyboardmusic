@@ -1,6 +1,7 @@
 package music;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import javax.sound.midi.*;
@@ -23,8 +24,9 @@ public class Synthesizer
 
 //****  set tempo (meta event)  ****
 		MetaMessage mt = new MetaMessage();
-        byte[] bt = {0x02, (byte)0x00, 0x00};
-		mt.setMessage(0x51 ,bt, 3);
+		int tempo = (int) (60*1000000/bpm);
+        byte[] bt = toByteArray(tempo);
+      	mt.setMessage(0x51 , bt, 3);
 		me = new MidiEvent(mt,(long)0);
 		t.add(me);
 
@@ -54,6 +56,12 @@ public class Synthesizer
 		t.add(me);
 		
 		return t;
+	}
+	private static byte[] toByteArray(int value) {
+	    return new byte[] { 
+	        (byte)(value >> 16),
+	        (byte)(value >> 8),
+	        (byte)value };
 	}
 	private static void addNote(Track t, Note n) throws Exception
 	{
@@ -90,7 +98,7 @@ public class Synthesizer
 			mt = new MetaMessage();
 	        byte[] bet = {}; // empty array
 			mt.setMessage(0x2F,bet,0);
-			me = new MidiEvent(mt, (long)140 + PPQ);
+			me = new MidiEvent(mt, (long)latestEnd + PPQ);
 			t.add(me);
 
 	//****  write the MIDI sequence to a MIDI file  ****
