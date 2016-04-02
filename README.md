@@ -6,8 +6,8 @@ Alpha Version
 #Setting the Tempo
 Firstly, we need to know how fast you plan to type your song. Press the "Set Beat" button and immediately start tapping any keyboard key to the desired beat. This will let the program know about how to interpret the length of future notes. Once you feel like you've tapped an adaquate amount of times, click the stop button and the program will record the tempo.
 
-#Wrting Music
-Click the "Start Recording Music" button and then listen to the sound of the metronome. When you are ready, start tapping/pressing keyboard notes in the rhythm that you desire. Once you are done, click the "STOP Recording Music Button." Your music is now saved in a midi file.
+#Writing Music
+Click the "Start Recording Music" button and then listen to the sound of the metronome. When you are ready, start tapping/pressing keyboard notes in the rhythm that you desire. Once you are done, click the "STOP Recording Music Button." You now have your sheet music saved in a midi file in the same directory as your program.
 
 #Notes
 a = C, w = C#, s = D, e = D#, d = E, f = F, t = F#, g = G, y = G#, h = A, u = A#, j = B, k = C
