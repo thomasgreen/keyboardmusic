@@ -12,6 +12,8 @@ public class Synthesizer
 	public static boolean legato = false;
 	private static Track initializeMidi(Sequence s, int bpm) throws Exception
 	{
+		//Code courtesy of http://www.automatic-pilot.com/midifile.html
+		
 		//****  Create a new MIDI sequence with 24 ticks per beat  ****
 //****  Obtain a MIDI track from the sequence  ****
 		Track t = s.createTrack();

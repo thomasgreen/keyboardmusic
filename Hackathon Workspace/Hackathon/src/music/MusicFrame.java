@@ -225,19 +225,6 @@ public class MusicFrame extends javax.swing.JFrame {
                     record.setEnabled(true);
                     beat.setText("Set Beat");
                 }
-    }//GEN-LAST:event_beatActionPerformed
-    public static void play()
-    {
-        try
-        {
-            Clip clip = AudioSystem.getClip();
-            clip.open(AudioSystem.getAudioInputStream(new File("metronome.wav")));
-            clip.start();
-        }
-        catch (Exception exc)
-        {
-            exc.printStackTrace(System.out);
-        }
     }
     private void recordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recordActionPerformed
       
