@@ -24,7 +24,7 @@ public class Pitch
 		int code = x + (dO * 12);
 		if(name.length() > 2)
 		{
-			if(name.substring(2) == "s")
+			if(name.substring(2) == "#")
 				code += 1;
 		}
 		return code;
@@ -39,7 +39,7 @@ public class Pitch
 		String[] key = {"a", "s", "d", "f", "g", "h", "j", "k", "l", ";",
 				"w", "e", "t", "y", "u", "o", "p"};
 		String[] pitch = {"C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "D5", "E5",
-				"C4s", "D4s", "F4s", "G4s", "A4s", "C5s", "D5s"};
+				"C4#", "D4#", "F4#", "G4#", "A4#", "C5#", "D5#"};
 		for(int i = 0; i < key.length; i++)
 		{
 			dict.put(key[i], pitch[i]);
