@@ -11,5 +11,10 @@ Click the "Start Recording Music" button and then listen to the sound of the met
 
 #Notes
 a = C, w = C#, s = D, e = D#, d = E, f = F, t = F#, g = G, y = G#, h = A, u = A#, j = B, k = C
+
+#Potential Future Releases
+-Bug fixes to better predict short note vs long note <br>
+-More than 1 octave range <br>
+-Live dynamic recording with external slider<br>
 <br><br>
 By Raymond Tat and Thomas Zhang for CUSA Hackathon
