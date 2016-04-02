@@ -1,0 +1,17 @@
+package music;
+
+import javax.swing.Timer;
+
+public class Metronome {
+	Timer myTimer;
+	public Metronome(int bpm)
+	{
+		myTimer = new Timer(500, new ActionListener()
+		{
+			public void actionPerformed(Actionevent e)
+			{
+				
+			}
+		});
+	}
+}

@@ -1,0 +1,13 @@
+package music;
+
+public class Metronome {
+	Timer myTimer;
+	public Metronome(int bpm)
+	{
+		
+	}
+	public void start()
+	{
+		
+	}
+}

@@ -1,0 +1,116 @@
+package music;
+
+import java.io.File;
+import java.nio.ByteBuffer;
+import java.util.List;
+
+import javax.sound.midi.*;
+
+public class Synthesizer
+{
+	public static final int PPQ = 24;
+	private static Track initializeMidi(Sequence s, int bpm) throws Exception
+	{
+		//****  Create a new MIDI sequence with 24 ticks per beat  ****
+//****  Obtain a MIDI track from the sequence  ****
+		Track t = s.createTrack();
+
+//****  General MIDI sysex -- turn on General MIDI sound set  ****
+		byte[] b = {(byte)0xF0, 0x7E, 0x7F, 0x09, 0x01, (byte)0xF7};
+		SysexMessage sm = new SysexMessage();
+		sm.setMessage(b, 6);
+		MidiEvent me = new MidiEvent(sm,(long)0);
+		t.add(me);
+
+//****  set tempo (meta event)  ****
+		MetaMessage mt = new MetaMessage();
+		int tempo = (int) ((1.0/bpm)*60*1000);
+		tempo = 60;
+        byte[] bt = {0x02, 0x00, 0x00};
+        bt = toByteArray(tempo);
+      	mt.setMessage(0x51 , bt, 3);
+		me = new MidiEvent(mt,(long)0);
+		t.add(me);
+
+//****  set track name (meta event)  ****
+		mt = new MetaMessage();
+		String TrackName = new String("midifile track");
+		mt.setMessage(0x03 ,TrackName.getBytes(), TrackName.length());
+		me = new MidiEvent(mt,(long)0);
+		t.add(me);
+
+//****  set omni on  ****
+		ShortMessage mm = new ShortMessage();
+		mm.setMessage(0xB0, 0x7D,0x00);
+		me = new MidiEvent(mm,(long)0);
+		t.add(me);
+
+//****  set poly on  ****
+		mm = new ShortMessage();
+		mm.setMessage(0xB0, 0x7F,0x00);
+		me = new MidiEvent(mm,(long)0);
+		t.add(me);
+
+//****  set instrument to Piano  ****
+		mm = new ShortMessage();
+		mm.setMessage(0xC0, 0x00, 0x00);
+		me = new MidiEvent(mm,(long)0);
+		t.add(me);
+		
+		return t;
+	}
+	private static byte[] toByteArray(int value) {
+	    return new byte[] { 
+	        (byte)(value >> 16),
+	        (byte)(value >> 8),
+	        (byte)value };
+	}
+	private static void addNote(Track t, Note n) throws Exception
+	{
+		ShortMessage mm = new ShortMessage();
+		mm.setMessage(ShortMessage.NOTE_ON, n.getPitch().midiCode, 0x60);
+		t.add(new MidiEvent(mm, (long) n.getStart()));
+		mm = new ShortMessage();
+		mm.setMessage(ShortMessage.NOTE_OFF, n.getPitch().midiCode, 0);
+		t.add(new MidiEvent(mm, (long) n.getStart() + n.getDuration()));
+	}
+	public static void toMidi(Music music)
+	{
+		System.out.println("midifile begin ");
+		try
+		{
+			Sequence s = new Sequence(javax.sound.midi.Sequence.PPQ, PPQ);
+			Track t = initializeMidi(s, music.tempo);
+			ShortMessage mm = new ShortMessage();
+			MidiEvent me = new MidiEvent(mm, (long)0);
+			MetaMessage mt = new MetaMessage();
+			List<Note> notes = music.getNotes();
+			
+			int latestEnd = 0;
+			for(Note n: notes)
+			{
+				addNote(t, n);
+				int end = n.getStart() + n.getDuration();
+				if (latestEnd < end)
+					latestEnd = end;
+			}
+			System.out.println("latest end: " + latestEnd);
+
+	//****  set end of track (meta event) 19 ticks later  ****
+			mt = new MetaMessage();
+	        byte[] bet = {}; // empty array
+			mt.setMessage(0x2F,bet,0);
+			me = new MidiEvent(mt, (long)latestEnd + PPQ);
+			t.add(me);
+
+	//****  write the MIDI sequence to a MIDI file  ****
+			File f = new File("midifile.mid");
+			MidiSystem.write(s,1,f);
+		} //try
+			catch(Exception e)
+		{
+			System.out.println("Exception caught " + e.toString());
+		} //catch
+	    System.out.println("midifile end ");
+	}
+}
